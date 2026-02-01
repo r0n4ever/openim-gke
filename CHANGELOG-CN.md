@@ -29,19 +29,21 @@
 根据2024-2025年的最新文档和最佳实践，以下组件已确认使用推荐版本：
 
 ### Redpanda (Kafka 替代品)
-- **Helm Chart**: 最新版本 5.9.24 (2025年5月)
+- **Helm Chart**: 5.9.24 (2025年5月发布，已确认为当前稳定版本)
 - **特性**: 
   - 严格的模式验证
   - 改进的 Kubernetes 兼容性
   - Redpanda Console v3 支持
   - 通过 Secrets/ConfigMaps 配置集群
+- **注意**: 项目配置使用官方 Redpanda Helm repository，将自动使用最新可用版本
 
 ### SeaweedFS (MinIO 替代品)
-- **Helm Chart**: 最新版本 4.7.0 (2026年初)
+- **Helm Chart**: 4.7.0 (2025年末/2026年初发布)
 - **特性**:
   - 定期更新确保安全性
   - 改进的 S3 API 兼容性
   - 更好的小文件性能
+- **注意**: 使用 Bitnami 或官方 SeaweedFS Helm repository 获取最新版本
 
 ### NGINX Ingress Controller
 - **Helm Chart**: 最新版本 4.14.2 (controller v1.14.2)
@@ -61,8 +63,8 @@
   - Kafka: 3.0+
 
 ### MySQL
-- **Helm Chart**: Bitnami 14.0.3 (最新稳定版)
-- **注意**: Bitnami charts 在2025年9月后需要订阅
+- **Helm Chart**: Bitnami 14.0.3（最新稳定版）
+- **重要提示**: 从2025年9月29日起，Bitnami Helm charts 需要 Broadcom (VMware) 订阅。对于持续的开源使用，可以考虑 Chainguard 维护的兼容分支或其他替代方案。
 
 ## 中文化完成的文件
 
