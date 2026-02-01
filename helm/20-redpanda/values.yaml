@@ -1,23 +1,23 @@
-# Redpanda Configuration - Kafka API Compatible Message Queue
-# Redpanda is a Kafka-compatible streaming platform, simpler and faster than Kafka
+# Redpanda 配置 - 兼容 Kafka API 的消息队列
+# Redpanda 是一个兼容 Kafka 的流平台，比 Kafka 更简单、更快
 
-# Cluster configuration
+# 集群配置
 cluster:
-  # Number of Redpanda brokers
+  # Redpanda broker 数量
   replicas: 3
 
-# Storage configuration
+# 存储配置
 storage:
   persistentVolume:
     enabled: true
     size: 10Gi
-    storageClass: standard  # GKE default storage class
+    storageClass: standard  # GKE 默认存储类
   
-  # Tiered storage for cost optimization (optional)
+  # 分层存储用于成本优化（可选）
   tieredStorage:
     enabled: false
 
-# Resource limits
+# 资源限制
 resources:
   cpu:
     cores: 1000m
@@ -26,27 +26,27 @@ resources:
       max: 2Gi
       min: 1Gi
 
-# Kafka API configuration
+# Kafka API 配置
 kafkaApi:
   - port: 9092
-    authenticationMethod: none  # For internal cluster use
+    authenticationMethod: none  # 用于内部集群使用
 
-# Schema Registry (optional, useful for data validation)
+# Schema Registry（可选，对数据验证有用）
 schemaRegistry:
   enabled: true
   port: 8081
 
-# HTTP Proxy for REST API
+# HTTP Proxy 用于 REST API
 pandaproxy:
   enabled: true
   port: 8082
 
-# Monitoring
+# 监控
 monitoring:
   enabled: true
   scrapeInterval: 30s
 
-# Affinity rules for high availability
+# 高可用性亲和性规则
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
@@ -60,9 +60,9 @@ affinity:
                   - redpanda
           topologyKey: kubernetes.io/hostname
 
-# Service configuration
+# 服务配置
 service:
-  type: ClusterIP  # Internal access only
+  type: ClusterIP  # 仅内部访问
   ports:
     kafka: 9092
     admin: 9644
@@ -70,7 +70,7 @@ service:
     proxy: 8082
 
 # ==============================================================================
-# Installation Command:
+# 安装命令：
 # helm repo add redpanda https://charts.redpanda.com
 # helm repo update
 # helm install redpanda redpanda/redpanda \
@@ -78,19 +78,19 @@ service:
 #   --values helm/20-redpanda/values.yaml
 # ==============================================================================
 
-# Connection details for OpenIM:
-# Bootstrap servers: redpanda.redpanda.svc.cluster.local:9092
-# Schema Registry: http://redpanda.redpanda.svc.cluster.local:8081
+# OpenIM 的连接详情：
+# Bootstrap 服务器：redpanda.redpanda.svc.cluster.local:9092
+# Schema Registry：http://redpanda.redpanda.svc.cluster.local:8081
 
-# Advantages over Kafka:
-# - Single binary, no ZooKeeper dependency
-# - Lower resource consumption
-# - Kafka API compatible (no code changes needed)
-# - Built-in schema registry
-# - Better performance for smaller clusters
+# 相比 Kafka 的优势：
+# - 单一二进制文件，无需 ZooKeeper 依赖
+# - 更低的资源消耗
+# - 完全兼容 Kafka API（无需修改代码）
+# - 内置 schema registry
+# - 适合较小集群的更好性能
 
-# TODO: For production, consider:
-# - Enabling authentication (SASL/SCRAM)
-# - Setting up TLS encryption
-# - Configuring tiered storage for cost savings
-# - Adjusting retention policies based on workload
+# 生产环境需要考虑：
+# - 启用认证（SASL/SCRAM）
+# - 设置 TLS 加密
+# - 配置分层存储以节省成本
+# - 根据工作负载调整保留策略

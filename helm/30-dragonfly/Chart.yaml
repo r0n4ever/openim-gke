@@ -1,15 +1,15 @@
-# Dragonfly - Redis API Compatible In-Memory Data Store
-# Since Dragonfly lacks a mature official Helm chart, this is a minimal custom chart
+# Dragonfly - 兼容 Redis API 的内存数据存储
+# 由于 Dragonfly 缺乏成熟的官方 Helm chart，这是一个最小的自定义 chart
 
 apiVersion: v2
 name: dragonfly
-description: A Helm chart for Dragonfly in-memory datastore
+description: Dragonfly 内存数据存储的 Helm chart
 type: application
 version: 1.0.0
-appVersion: "v1.13.0"
+appVersion: "v1.36.1"  # 更新到最新稳定版本
 
-# Dragonfly is a modern Redis replacement with:
-# - Full Redis API compatibility
-# - Better performance (25x faster on some workloads)
-# - Lower memory usage
-# - Multi-threaded architecture
+# Dragonfly 是一个现代化的 Redis 替代品，具有：
+# - 完全兼容 Redis API
+# - 更好的性能（某些工作负载快 25 倍）
+# - 更低的内存使用
+# - 多线程架构

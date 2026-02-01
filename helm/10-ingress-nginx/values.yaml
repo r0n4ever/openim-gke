@@ -1,20 +1,20 @@
-# Ingress NGINX Controller Configuration
-# This is the entry point for all HTTP/HTTPS traffic to the cluster
+# Ingress NGINX Controller 配置
+# 这是集群所有 HTTP/HTTPS 流量的入口点
 
-# Controller configuration
+# Controller 配置
 controller:
-  # Replica count for high availability
+  # 高可用性副本数
   replicaCount: 2
   
-  # Service configuration
+  # 服务配置
   service:
     type: LoadBalancer
     annotations:
-      # GCP-specific annotations
+      # GCP 特定注解
       cloud.google.com/load-balancer-type: "External"
     externalTrafficPolicy: Local
   
-  # Resource limits
+  # 资源限制
   resources:
     limits:
       cpu: 500m
@@ -23,38 +23,38 @@ controller:
       cpu: 250m
       memory: 256Mi
   
-  # Metrics for monitoring
+  # 监控指标
   metrics:
     enabled: true
     serviceMonitor:
-      enabled: false  # Set to true if using Prometheus Operator
+      enabled: false  # 如果使用 Prometheus Operator，设置为 true
   
-  # Autoscaling
+  # 自动扩缩容
   autoscaling:
     enabled: true
     minReplicas: 2
     maxReplicas: 5
     targetCPUUtilizationPercentage: 80
   
-  # Pod disruption budget for high availability
+  # 高可用性 Pod 中断预算
   podDisruptionBudget:
     enabled: true
     minAvailable: 1
   
-  # Configuration for handling large uploads (for SeaweedFS)
+  # 处理大文件上传的配置（用于 SeaweedFS）
   config:
     proxy-body-size: "100m"
     proxy-connect-timeout: "600"
     proxy-send-timeout: "600"
     proxy-read-timeout: "600"
 
-# Default backend (optional 404 page)
+# 默认后端（可选的 404 页面）
 defaultBackend:
   enabled: true
   replicaCount: 1
 
 # ==============================================================================
-# Installation Command:
+# 安装命令：
 # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 # helm repo update
 # helm install ingress-nginx ingress-nginx/ingress-nginx \
@@ -62,8 +62,8 @@ defaultBackend:
 #   --values helm/10-ingress-nginx/values.yaml
 # ==============================================================================
 
-# Notes:
-# - This controller will create a GCP Load Balancer
-# - Get the external IP with: kubectl get svc -n ingress-nginx
-# - Point your DNS records to this external IP
-# - For production, consider setting up SSL/TLS with cert-manager
+# 注意事项：
+# - 此控制器将创建一个 GCP 负载均衡器
+# - 使用以下命令获取外部 IP：kubectl get svc -n ingress-nginx
+# - 将您的 DNS 记录指向此外部 IP
+# - 生产环境考虑使用 cert-manager 设置 SSL/TLS

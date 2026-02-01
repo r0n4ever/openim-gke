@@ -1,4 +1,4 @@
-# Provider configuration for OpenIM GKE infrastructure
+# OpenIM GKE 基础设施提供者配置
 
 terraform {
   required_version = ">= 1.0"
@@ -6,11 +6,11 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 5.0"
+      version = "~> 6.0"  # 更新到最新稳定版本
     }
   }
 
-  # Backend configuration (uncomment and configure for remote state)
+  # 后端配置（取消注释并配置用于远程状态）
   # backend "gcs" {
   #   bucket = "your-terraform-state-bucket"
   #   prefix = "openim/gke"
