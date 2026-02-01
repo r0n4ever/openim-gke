@@ -1,22 +1,22 @@
-# SeaweedFS Configuration - S3 Compatible Object Storage
-# SeaweedFS is a simpler, faster alternative to MinIO for distributed object storage
+# SeaweedFS 配置 - 兼容 S3 的对象存储
+# SeaweedFS 是一个更简单、更快的分布式对象存储，可替代 MinIO
 
-# Global settings
+# 全局设置
 global:
-  # Create RBAC resources
+  # 创建 RBAC 资源
   rbac:
     create: true
   
-  # Monitoring
+  # 监控
   monitoring:
     enabled: true
 
-# Master server configuration (metadata and volume management)
+# Master 服务器配置（元数据和卷管理）
 master:
   enabled: true
-  replicas: 3  # For high availability
+  replicas: 3  # 用于高可用性
   
-  # Resource limits
+  # 资源限制
   resources:
     limits:
       cpu: 500m
@@ -25,29 +25,29 @@ master:
       cpu: 200m
       memory: 256Mi
   
-  # Persistence for metadata
+  # 元数据持久化
   persistence:
     enabled: true
     storageClass: standard
     size: 5Gi
   
-  # Service configuration
+  # 服务配置
   service:
     type: ClusterIP
     port: 9333
 
-# Volume server configuration (data storage)
+# Volume 服务器配置（数据存储）
 volume:
   enabled: true
   replicas: 3
   
-  # Data directories per volume server
+  # 每个 volume 服务器的数据目录
   dataDirs:
     - name: data1
       size: 50Gi
       storageClass: standard
   
-  # Resource limits
+  # 资源限制
   resources:
     limits:
       cpu: 1000m
@@ -56,21 +56,21 @@ volume:
       cpu: 500m
       memory: 1Gi
   
-  # Service configuration
+  # 服务配置
   service:
     type: ClusterIP
     port: 8080
 
-# Filer configuration (file system interface and S3 API)
+# Filer 配置（文件系统接口和 S3 API）
 filer:
   enabled: true
   replicas: 2
   
-  # Enable S3 API
+  # 启用 S3 API
   s3:
     enabled: true
     port: 8333
-    # S3 configuration
+    # S3 配置
     config: |
       {
         "identities": [
@@ -91,11 +91,11 @@ filer:
         ]
       }
   
-  # Enable WebDAV (optional)
+  # 启用 WebDAV（可选）
   webdav:
     enabled: false
   
-  # Resource limits
+  # 资源限制
   resources:
     limits:
       cpu: 1000m
@@ -104,21 +104,21 @@ filer:
       cpu: 500m
       memory: 512Mi
   
-  # Persistence for filer metadata
+  # Filer 元数据持久化
   persistence:
     enabled: true
     storageClass: standard
     size: 10Gi
   
-  # Service configuration
+  # 服务配置
   service:
     type: ClusterIP
     port: 8888
 
-# Ingress configuration (optional, for external access)
+# Ingress 配置（可选，用于外部访问）
 ingress:
   enabled: false
-  # Uncomment and configure for external access
+  # 取消注释并配置以实现外部访问
   # className: nginx
   # annotations:
   #   cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -136,7 +136,7 @@ ingress:
   #       - s3.openim.example.com
 
 # ==============================================================================
-# Installation Command:
+# 安装命令：
 # helm repo add seaweedfs https://seaweedfs.github.io/seaweedfs/helm
 # helm repo update
 # helm install seaweedfs seaweedfs/seaweedfs \
@@ -144,28 +144,28 @@ ingress:
 #   --values helm/40-seaweedfs/values.yaml
 # ==============================================================================
 
-# S3 Connection details for OpenIM:
-# Endpoint: http://seaweedfs-filer.seaweedfs.svc.cluster.local:8333
-# Access Key: admin
-# Secret Key: admin123
-# Region: us-east-1 (any value works)
+# OpenIM 的 S3 连接详情：
+# 端点：http://seaweedfs-filer.seaweedfs.svc.cluster.local:8333
+# 访问密钥：admin
+# 秘密密钥：admin123
+# 区域：us-east-1（任何值都可以）
 
-# Advantages over MinIO:
-# - Simpler architecture (no distributed locking complexity)
-# - Better performance for many small files
-# - Lower resource consumption
-# - S3 API compatible (no code changes)
-# - Native file system interface (Filer)
+# 相比 MinIO 的优势：
+# - 更简单的架构（无分布式锁定复杂性）
+# - 适合大量小文件的更好性能
+# - 更低的资源消耗
+# - 完全兼容 S3 API（无需修改代码）
+# - 原生文件系统接口（Filer）
 
-# Trade-offs:
-# - Smaller ecosystem than MinIO
-# - Fewer enterprise features
-# - Less mature S3 compatibility (99% compatible)
+# 权衡：
+# - 生态系统比 MinIO 小
+# - 企业功能较少
+# - S3 兼容性较低（99% 兼容）
 
-# TODO: For production, consider:
-# - Changing default S3 credentials (admin/admin123)
-# - Enabling TLS for S3 API
-# - Setting up ingress for external access
-# - Configuring backup and replication
-# - Adjusting storage sizes based on workload
-# - Consider adding more volume servers for larger deployments
+# 生产环境需要考虑：
+# - 更改默认 S3 凭证（admin/admin123）
+# - 为 S3 API 启用 TLS
+# - 设置 ingress 以实现外部访问
+# - 配置备份和复制
+# - 根据工作负载调整存储大小
+# - 考虑为大型部署添加更多 volume 服务器

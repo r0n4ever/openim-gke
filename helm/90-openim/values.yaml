@@ -1,28 +1,28 @@
-# OpenIM Server Configuration
-# This configuration integrates OpenIM with all custom replacement components:
+# OpenIM 服务器配置
+# 此配置将 OpenIM 与所有自定义替换组件集成：
 # - Kafka → Redpanda
 # - Redis → Dragonfly
 # - MinIO → SeaweedFS
-# - MySQL (official chart)
+# - MySQL（官方 chart）
 
 # ==============================================================================
-# Global Configuration
+# 全局配置
 # ==============================================================================
 global:
-  # Domain configuration
-  # TODO: Replace with your actual domain
+  # 域名配置
+  # 待办：替换为您的实际域名
   domain: "openim.example.com"
   
-  # Image configuration
+  # 镜像配置
   image:
     registry: "ghcr.io/openimsdk"
     pullPolicy: IfNotPresent
 
 # ==============================================================================
-# MySQL Database Configuration (Dependency)
+# MySQL 数据库配置（依赖）
 # ==============================================================================
 mysql:
-  # Use the official MySQL Helm chart
+  # 使用官方 MySQL Helm chart
   enabled: true
   auth:
     rootPassword: "openIM123"
@@ -44,87 +44,87 @@ mysql:
         cpu: 500m
         memory: 1Gi
 
-  # Architecture (standalone or replication)
+  # 架构（单机或复制）
   architecture: standalone
   
-  # For production, consider replication:
+  # 生产环境考虑使用复制：
   # architecture: replication
   # secondary:
   #   replicaCount: 1
 
 # ==============================================================================
-# Kafka Configuration (Using Redpanda)
+# Kafka 配置（使用 Redpanda）
 # ==============================================================================
 kafka:
-  # Disable the default Kafka chart
+  # 禁用默认的 Kafka chart
   enabled: false
   
-  # External Kafka configuration (Redpanda)
+  # 外部 Kafka 配置（Redpanda）
   external:
     enabled: true
-    # Redpanda service address
+    # Redpanda 服务地址
     brokers:
       - "redpanda-0.redpanda.redpanda.svc.cluster.local:9092"
       - "redpanda-1.redpanda.redpanda.svc.cluster.local:9092"
       - "redpanda-2.redpanda.redpanda.svc.cluster.local:9092"
     
-    # Or use the Redpanda service (load-balanced)
+    # 或使用 Redpanda 服务（负载均衡）
     # brokers:
     #   - "redpanda.redpanda.svc.cluster.local:9092"
 
 # ==============================================================================
-# Redis Configuration (Using Dragonfly)
+# Redis 配置（使用 Dragonfly）
 # ==============================================================================
 redis:
-  # Disable the default Redis chart
+  # 禁用默认的 Redis chart
   enabled: false
   
-  # External Redis configuration (Dragonfly)
+  # 外部 Redis 配置（Dragonfly）
   external:
     enabled: true
-    # Dragonfly service address
+    # Dragonfly 服务地址
     host: "dragonfly.dragonfly.svc.cluster.local"
     port: 6379
-    # No password by default (set in production)
+    # 默认无密码（生产环境需设置）
     password: ""
 
 # ==============================================================================
-# MinIO/Object Storage Configuration (Using SeaweedFS)
+# MinIO/对象存储配置（使用 SeaweedFS）
 # ==============================================================================
 minio:
-  # Disable the default MinIO chart
+  # 禁用默认的 MinIO chart
   enabled: false
 
-# Object storage configuration (SeaweedFS S3 API)
+# 对象存储配置（SeaweedFS S3 API）
 object:
-  # Enable object storage
+  # 启用对象存储
   enable: true
   
-  # Use MinIO-compatible configuration (SeaweedFS S3 API)
+  # 使用兼容 MinIO 的配置（SeaweedFS S3 API）
   apiURL: "http://seaweedfs-filer.seaweedfs.svc.cluster.local:8333"
   
   minio:
-    # SeaweedFS S3 endpoint
+    # SeaweedFS S3 端点
     endpoint: "http://seaweedfs-filer.seaweedfs.svc.cluster.local:8333"
     
-    # Bucket name for OpenIM
+    # OpenIM 的存储桶名称
     bucket: "openim"
     
-    # S3 credentials (TODO: Change in production!)
+    # S3 凭证（待办：生产环境需更改！）
     accessKeyID: "admin"
     secretAccessKey: "admin123"
     
-    # Region (any value works for SeaweedFS)
+    # 区域（SeaweedFS 可以使用任何值）
     region: "us-east-1"
     
-    # Sign version
+    # 签名版本
     signVersion: "v4"
 
 # ==============================================================================
-# OpenIM Server Components
+# OpenIM 服务器组件
 # ==============================================================================
 
-# API Server
+# API 服务器
 api:
   replicaCount: 2
   
@@ -140,7 +140,7 @@ api:
     type: ClusterIP
     port: 10002
 
-# Message Gateway
+# 消息网关
 msggateway:
   replicaCount: 2
   
@@ -156,7 +156,7 @@ msggateway:
     type: ClusterIP
     port: 10001
 
-# Message Transfer
+# 消息传输
 msgtransfer:
   replicaCount: 2
   
@@ -168,7 +168,7 @@ msgtransfer:
       cpu: 500m
       memory: 512Mi
 
-# Push
+# 推送
 push:
   replicaCount: 2
   
@@ -180,7 +180,7 @@ push:
       cpu: 250m
       memory: 256Mi
 
-# Auth
+# 认证
 auth:
   replicaCount: 2
   
@@ -192,7 +192,7 @@ auth:
       cpu: 250m
       memory: 256Mi
 
-# Conversation
+# 会话
 conversation:
   replicaCount: 2
   
@@ -204,7 +204,7 @@ conversation:
       cpu: 250m
       memory: 256Mi
 
-# Friend
+# 好友
 friend:
   replicaCount: 2
   
@@ -216,7 +216,7 @@ friend:
       cpu: 250m
       memory: 256Mi
 
-# Group
+# 群组
 group:
   replicaCount: 2
   
@@ -228,7 +228,7 @@ group:
       cpu: 250m
       memory: 256Mi
 
-# Msg
+# 消息
 msg:
   replicaCount: 2
   
@@ -240,7 +240,7 @@ msg:
       cpu: 500m
       memory: 512Mi
 
-# Third
+# 第三方服务
 third:
   replicaCount: 2
   
@@ -252,7 +252,7 @@ third:
       cpu: 250m
       memory: 256Mi
 
-# User
+# 用户
 user:
   replicaCount: 2
   
@@ -265,7 +265,7 @@ user:
       memory: 256Mi
 
 # ==============================================================================
-# Ingress Configuration
+# Ingress 配置
 # ==============================================================================
 ingress:
   enabled: true
@@ -273,14 +273,14 @@ ingress:
   
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    # For WebSocket support
+    # WebSocket 支持
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    # TODO: Enable TLS with cert-manager
+    # 待办：使用 cert-manager 启用 TLS
     # cert-manager.io/cluster-issuer: letsencrypt-prod
   
   hosts:
-    - host: openim.example.com  # TODO: Replace with your domain
+    - host: openim.example.com  # 待办：替换为您的域名
       paths:
         - path: /
           pathType: Prefix
@@ -289,55 +289,55 @@ ingress:
               name: openim-api
               port: 10002
   
-  # TODO: Enable TLS
+  # 待办：启用 TLS
   # tls:
   #   - secretName: openim-tls
   #     hosts:
   #       - openim.example.com
 
 # ==============================================================================
-# Monitoring and Observability
+# 监控和可观测性
 # ==============================================================================
 metrics:
   enabled: true
   serviceMonitor:
-    enabled: false  # Set to true if using Prometheus Operator
+    enabled: false  # 如果使用 Prometheus Operator，设置为 true
 
 # ==============================================================================
-# Notes and TODOs:
+# 注意事项和待办：
 # ==============================================================================
 # 
-# IMPORTANT: This configuration assumes:
-# 1. Redpanda is installed in the 'redpanda' namespace
-# 2. Dragonfly is installed in the 'dragonfly' namespace
-# 3. SeaweedFS is installed in the 'seaweedfs' namespace
-# 4. All components are accessible via internal DNS
+# 重要提示：此配置假设：
+# 1. Redpanda 安装在 'redpanda' 命名空间
+# 2. Dragonfly 安装在 'dragonfly' 命名空间
+# 3. SeaweedFS 安装在 'seaweedfs' 命名空间
+# 4. 所有组件都可以通过内部 DNS 访问
 #
-# NO CODE CHANGES REQUIRED: All components use standard APIs:
-# - Redpanda: Kafka API (fully compatible)
-# - Dragonfly: Redis protocol (fully compatible)
-# - SeaweedFS: S3 API (MinIO-compatible)
+# 无需修改代码：所有组件都使用标准 API：
+# - Redpanda：Kafka API（完全兼容）
+# - Dragonfly：Redis 协议（完全兼容）
+# - SeaweedFS：S3 API（兼容 MinIO）
 #
-# TODO before deploying to production:
-# 1. Change all default passwords (MySQL, SeaweedFS)
-# 2. Configure your actual domain name
-# 3. Enable TLS/SSL with cert-manager
-# 4. Enable authentication for Redpanda and Dragonfly
-# 5. Adjust replica counts and resources based on load
-# 6. Set up monitoring and alerting
-# 7. Configure backup strategies for databases
-# 8. Review and adjust resource limits
+# 部署到生产环境前的待办事项：
+# 1. 更改所有默认密码（MySQL、SeaweedFS）
+# 2. 配置实际域名
+# 3. 使用 cert-manager 启用 TLS/SSL
+# 4. 为 Redpanda 和 Dragonfly 启用身份验证
+# 5. 根据负载调整副本数和资源
+# 6. 设置监控和告警
+# 7. 配置数据库备份策略
+# 8. 审查和调整资源限制
 #
-# Field Compatibility Notes:
-# - This values.yaml is based on OpenIM Helm chart structure
-# - Actual field names may vary depending on chart version
-# - Run `helm show values openim/openim-server` to verify fields
-# - Update this file if official chart structure changes
+# 字段兼容性注意事项：
+# - 此 values.yaml 基于 OpenIM Helm chart 结构
+# - 实际字段名称可能因 chart 版本而异
+# - 运行 `helm show values openim/openim-server` 来验证字段
+# - 如果官方 chart 结构发生变化，请更新此文件
 #
-# PostgreSQL Support:
-# - OpenIM officially supports MySQL (default here)
-# - PostgreSQL support is possible but requires:
-#   * Changing database driver in OpenIM config
-#   * Testing schema compatibility
-#   * Not recommended without official support
+# PostgreSQL 支持：
+# - OpenIM 官方支持 MySQL（此处默认）
+# - PostgreSQL 支持是可能的，但需要：
+#   * 在 OpenIM 配置中更改数据库驱动
+#   * 测试架构兼容性
+#   * 不建议在没有官方支持的情况下使用
 # ==============================================================================
