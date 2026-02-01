@@ -1,0 +1,343 @@
+# OpenIM Server Configuration
+# This configuration integrates OpenIM with all custom replacement components:
+# - Kafka → Redpanda
+# - Redis → Dragonfly
+# - MinIO → SeaweedFS
+# - MySQL (official chart)
+
+# ==============================================================================
+# Global Configuration
+# ==============================================================================
+global:
+  # Domain configuration
+  # TODO: Replace with your actual domain
+  domain: "openim.example.com"
+  
+  # Image configuration
+  image:
+    registry: "ghcr.io/openimsdk"
+    pullPolicy: IfNotPresent
+
+# ==============================================================================
+# MySQL Database Configuration (Dependency)
+# ==============================================================================
+mysql:
+  # Use the official MySQL Helm chart
+  enabled: true
+  auth:
+    rootPassword: "openIM123"
+    database: "openIM_v3"
+    username: "openIM"
+    password: "openIM123"
+  
+  primary:
+    persistence:
+      enabled: true
+      storageClass: standard
+      size: 20Gi
+    
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+
+  # Architecture (standalone or replication)
+  architecture: standalone
+  
+  # For production, consider replication:
+  # architecture: replication
+  # secondary:
+  #   replicaCount: 1
+
+# ==============================================================================
+# Kafka Configuration (Using Redpanda)
+# ==============================================================================
+kafka:
+  # Disable the default Kafka chart
+  enabled: false
+  
+  # External Kafka configuration (Redpanda)
+  external:
+    enabled: true
+    # Redpanda service address
+    brokers:
+      - "redpanda-0.redpanda.redpanda.svc.cluster.local:9092"
+      - "redpanda-1.redpanda.redpanda.svc.cluster.local:9092"
+      - "redpanda-2.redpanda.redpanda.svc.cluster.local:9092"
+    
+    # Or use the Redpanda service (load-balanced)
+    # brokers:
+    #   - "redpanda.redpanda.svc.cluster.local:9092"
+
+# ==============================================================================
+# Redis Configuration (Using Dragonfly)
+# ==============================================================================
+redis:
+  # Disable the default Redis chart
+  enabled: false
+  
+  # External Redis configuration (Dragonfly)
+  external:
+    enabled: true
+    # Dragonfly service address
+    host: "dragonfly.dragonfly.svc.cluster.local"
+    port: 6379
+    # No password by default (set in production)
+    password: ""
+
+# ==============================================================================
+# MinIO/Object Storage Configuration (Using SeaweedFS)
+# ==============================================================================
+minio:
+  # Disable the default MinIO chart
+  enabled: false
+
+# Object storage configuration (SeaweedFS S3 API)
+object:
+  # Enable object storage
+  enable: true
+  
+  # Use MinIO-compatible configuration (SeaweedFS S3 API)
+  apiURL: "http://seaweedfs-filer.seaweedfs.svc.cluster.local:8333"
+  
+  minio:
+    # SeaweedFS S3 endpoint
+    endpoint: "http://seaweedfs-filer.seaweedfs.svc.cluster.local:8333"
+    
+    # Bucket name for OpenIM
+    bucket: "openim"
+    
+    # S3 credentials (TODO: Change in production!)
+    accessKeyID: "admin"
+    secretAccessKey: "admin123"
+    
+    # Region (any value works for SeaweedFS)
+    region: "us-east-1"
+    
+    # Sign version
+    signVersion: "v4"
+
+# ==============================================================================
+# OpenIM Server Components
+# ==============================================================================
+
+# API Server
+api:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  service:
+    type: ClusterIP
+    port: 10002
+
+# Message Gateway
+msggateway:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  
+  service:
+    type: ClusterIP
+    port: 10001
+
+# Message Transfer
+msgtransfer:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+# Push
+push:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Auth
+auth:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Conversation
+conversation:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Friend
+friend:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Group
+group:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Msg
+msg:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+
+# Third
+third:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# User
+user:
+  replicaCount: 2
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# ==============================================================================
+# Ingress Configuration
+# ==============================================================================
+ingress:
+  enabled: true
+  className: "nginx"
+  
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # For WebSocket support
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # TODO: Enable TLS with cert-manager
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+  
+  hosts:
+    - host: openim.example.com  # TODO: Replace with your domain
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: openim-api
+              port: 10002
+  
+  # TODO: Enable TLS
+  # tls:
+  #   - secretName: openim-tls
+  #     hosts:
+  #       - openim.example.com
+
+# ==============================================================================
+# Monitoring and Observability
+# ==============================================================================
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false  # Set to true if using Prometheus Operator
+
+# ==============================================================================
+# Notes and TODOs:
+# ==============================================================================
+# 
+# IMPORTANT: This configuration assumes:
+# 1. Redpanda is installed in the 'redpanda' namespace
+# 2. Dragonfly is installed in the 'dragonfly' namespace
+# 3. SeaweedFS is installed in the 'seaweedfs' namespace
+# 4. All components are accessible via internal DNS
+#
+# NO CODE CHANGES REQUIRED: All components use standard APIs:
+# - Redpanda: Kafka API (fully compatible)
+# - Dragonfly: Redis protocol (fully compatible)
+# - SeaweedFS: S3 API (MinIO-compatible)
+#
+# TODO before deploying to production:
+# 1. Change all default passwords (MySQL, SeaweedFS)
+# 2. Configure your actual domain name
+# 3. Enable TLS/SSL with cert-manager
+# 4. Enable authentication for Redpanda and Dragonfly
+# 5. Adjust replica counts and resources based on load
+# 6. Set up monitoring and alerting
+# 7. Configure backup strategies for databases
+# 8. Review and adjust resource limits
+#
+# Field Compatibility Notes:
+# - This values.yaml is based on OpenIM Helm chart structure
+# - Actual field names may vary depending on chart version
+# - Run `helm show values openim/openim-server` to verify fields
+# - Update this file if official chart structure changes
+#
+# PostgreSQL Support:
+# - OpenIM officially supports MySQL (default here)
+# - PostgreSQL support is possible but requires:
+#   * Changing database driver in OpenIM config
+#   * Testing schema compatibility
+#   * Not recommended without official support
+# ==============================================================================
