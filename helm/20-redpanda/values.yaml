@@ -1,0 +1,96 @@
+# Redpanda Configuration - Kafka API Compatible Message Queue
+# Redpanda is a Kafka-compatible streaming platform, simpler and faster than Kafka
+
+# Cluster configuration
+cluster:
+  # Number of Redpanda brokers
+  replicas: 3
+
+# Storage configuration
+storage:
+  persistentVolume:
+    enabled: true
+    size: 10Gi
+    storageClass: standard  # GKE default storage class
+  
+  # Tiered storage for cost optimization (optional)
+  tieredStorage:
+    enabled: false
+
+# Resource limits
+resources:
+  cpu:
+    cores: 1000m
+  memory:
+    container:
+      max: 2Gi
+      min: 1Gi
+
+# Kafka API configuration
+kafkaApi:
+  - port: 9092
+    authenticationMethod: none  # For internal cluster use
+
+# Schema Registry (optional, useful for data validation)
+schemaRegistry:
+  enabled: true
+  port: 8081
+
+# HTTP Proxy for REST API
+pandaproxy:
+  enabled: true
+  port: 8082
+
+# Monitoring
+monitoring:
+  enabled: true
+  scrapeInterval: 30s
+
+# Affinity rules for high availability
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - redpanda
+          topologyKey: kubernetes.io/hostname
+
+# Service configuration
+service:
+  type: ClusterIP  # Internal access only
+  ports:
+    kafka: 9092
+    admin: 9644
+    schemaRegistry: 8081
+    proxy: 8082
+
+# ==============================================================================
+# Installation Command:
+# helm repo add redpanda https://charts.redpanda.com
+# helm repo update
+# helm install redpanda redpanda/redpanda \
+#   --namespace redpanda --create-namespace \
+#   --values helm/20-redpanda/values.yaml
+# ==============================================================================
+
+# Connection details for OpenIM:
+# Bootstrap servers: redpanda.redpanda.svc.cluster.local:9092
+# Schema Registry: http://redpanda.redpanda.svc.cluster.local:8081
+
+# Advantages over Kafka:
+# - Single binary, no ZooKeeper dependency
+# - Lower resource consumption
+# - Kafka API compatible (no code changes needed)
+# - Built-in schema registry
+# - Better performance for smaller clusters
+
+# TODO: For production, consider:
+# - Enabling authentication (SASL/SCRAM)
+# - Setting up TLS encryption
+# - Configuring tiered storage for cost savings
+# - Adjusting retention policies based on workload

@@ -1,0 +1,43 @@
+# Terraform/OpenTofu
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars.backup
+crash.log
+crash.*.log
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Helm
+charts/
+*.tgz
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Local environment
+.env
+.env.local
+*.local
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup

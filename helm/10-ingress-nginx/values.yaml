@@ -1,0 +1,69 @@
+# Ingress NGINX Controller Configuration
+# This is the entry point for all HTTP/HTTPS traffic to the cluster
+
+# Controller configuration
+controller:
+  # Replica count for high availability
+  replicaCount: 2
+  
+  # Service configuration
+  service:
+    type: LoadBalancer
+    annotations:
+      # GCP-specific annotations
+      cloud.google.com/load-balancer-type: "External"
+    externalTrafficPolicy: Local
+  
+  # Resource limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  
+  # Metrics for monitoring
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false  # Set to true if using Prometheus Operator
+  
+  # Autoscaling
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+  
+  # Pod disruption budget for high availability
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  
+  # Configuration for handling large uploads (for SeaweedFS)
+  config:
+    proxy-body-size: "100m"
+    proxy-connect-timeout: "600"
+    proxy-send-timeout: "600"
+    proxy-read-timeout: "600"
+
+# Default backend (optional 404 page)
+defaultBackend:
+  enabled: true
+  replicaCount: 1
+
+# ==============================================================================
+# Installation Command:
+# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+# helm repo update
+# helm install ingress-nginx ingress-nginx/ingress-nginx \
+#   --namespace ingress-nginx --create-namespace \
+#   --values helm/10-ingress-nginx/values.yaml
+# ==============================================================================
+
+# Notes:
+# - This controller will create a GCP Load Balancer
+# - Get the external IP with: kubectl get svc -n ingress-nginx
+# - Point your DNS records to this external IP
+# - For production, consider setting up SSL/TLS with cert-manager

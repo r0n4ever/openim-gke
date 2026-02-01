@@ -1,0 +1,125 @@
+# Dragonfly Configuration
+# Custom Helm chart for Dragonfly - Redis-compatible in-memory store
+
+# Replica configuration
+replicaCount: 2
+
+image:
+  repository: docker.dragonflydb.io/dragonflydb/dragonfly
+  pullPolicy: IfNotPresent
+  tag: "v1.13.0"
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 6379  # Standard Redis port
+  annotations: {}
+
+# Resource limits
+resources:
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  requests:
+    cpu: 500m
+    memory: 2Gi
+
+# Dragonfly-specific configuration
+dragonfly:
+  # Maximum memory to use (in MB)
+  maxMemory: 2048
+  
+  # Number of threads (automatically detected if not set)
+  # threads: 4
+  
+  # Snapshot configuration
+  snapshot:
+    enabled: true
+    dir: /data
+    interval: 300  # Save every 5 minutes
+  
+  # Persistence
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 10Gi
+    accessMode: ReadWriteOnce
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod security context
+podSecurityContext:
+  fsGroup: 999
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 999
+  capabilities:
+    drop:
+      - ALL
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity rules for high availability
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - dragonfly
+          topologyKey: kubernetes.io/hostname
+
+# Liveness probe
+livenessProbe:
+  tcpSocket:
+    port: 6379
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Readiness probe
+readinessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - dragonfly --version
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# ==============================================================================
+# Installation Command:
+# helm install dragonfly helm/30-dragonfly \
+#   --namespace dragonfly --create-namespace
+# ==============================================================================
+
+# Connection details for OpenIM:
+# Host: dragonfly.dragonfly.svc.cluster.local
+# Port: 6379
+
+# Advantages over Redis:
+# - 25x better throughput in some workloads
+# - 30% less memory usage
+# - Vertical scalability (multi-threaded)
+# - Redis API compatible (no code changes)
+# - Built-in snapshot and replication
+
+# TODO: For production, consider:
+# - Enabling password authentication
+# - Setting up TLS encryption
+# - Configuring master-replica setup
+# - Adjusting memory limits based on workload
